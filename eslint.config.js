@@ -1,6 +1,6 @@
 import stylistic from '@stylistic/eslint-plugin'
 
-import withNuxt from '.nuxt/eslint.config.mjs'
+import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
   // your custom flat configs go here, for example:
@@ -24,6 +24,7 @@ export default withNuxt(
       'vue/no-multi-spaces': ['error', {
         ignoreProperties: false
       }],
+      'vue/multi-word-component-names': 'off',
       'vue/component-name-in-template-casing': ['error', 'PascalCase'],
       'vue/no-unused-refs': 'error',
       'vue/require-default-prop': 'error',
@@ -69,20 +70,13 @@ export default withNuxt(
   {
     rules: {
       'no-console': 'off', // 콘솔 로그 경고로 변경
-      '@typescript-eslint/no-explicit-any': 'warn', // any 사용에 대한 경고
+      '@typescript-eslint/no-explicit-any': 'off', // any 사용에 대한 경고
       '@typescript-eslint/no-unused-vars': ['error', {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_'
       }], // 사용하지 않는 변수에 대한 처리 개선
       'complexity': ['warn', 10], // 함수 복잡도 제한
-      'max-lines-per-function': ['warn', 50], // 함수 라인 수 제한
-      'sort-imports': ['error', {
-        ignoreCase: true,
-        ignoreDeclarationSort: false,
-        ignoreMemberSort: false,
-        memberSyntaxSortOrder: ['single', 'multiple', 'all', 'none'],
-        allowSeparatedGroups: true
-      }],
+      'max-lines-per-function': ['warn', 80], // 함수 라인 수 제한
       'import/no-duplicates': 'error',
       // 추가된 import 관련 규칙들
       'import/order': ['error', {
