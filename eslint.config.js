@@ -76,7 +76,6 @@ export default withNuxt(
         varsIgnorePattern: '^_'
       }], // 사용하지 않는 변수에 대한 처리 개선
       'complexity': ['warn', 10], // 함수 복잡도 제한
-      'max-lines-per-function': ['warn', 80], // 함수 라인 수 제한
       'import/no-duplicates': 'error',
       // 추가된 import 관련 규칙들
       'import/order': ['error', {
