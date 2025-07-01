@@ -3,11 +3,7 @@
 </script>
 
 <template>
-  <div>
-    Login
-  </div>
+  <div />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

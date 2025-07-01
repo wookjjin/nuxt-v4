@@ -1,14 +1,22 @@
 import { readdirSync, statSync } from 'fs'
 import { resolve } from 'path'
 
+// 파일명을 kebab-case로 변환하는 함수
+function toKebabCase(str: string) {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/\s+/g, '-')
+    .replace(/_/g, '-')
+    .toLowerCase()
+}
+
 /**
- * Creates a page route by recursively scanning the .vue
- * file from the specified directory.
- * @param dir - Directory path to scan
+ * 폴더 구조를 무시하고, 각 .vue 파일의 파일명만을 사용하여
+ * kebab-case로 변환한 경로로 페이지를 등록합니다.
+ * @param dir - 스캔할 디렉토리 경로
  * @param pages - Nuxt Page Array
- * @param routePrefix - Prefix of the route path to be created
  */
-export function scanAndRegisterPages(dir: string, pages: any[], routePrefix = '') {
+export function scanAndRegisterPages(dir: string, pages: any[]) {
   try {
     if (!statSync(dir).isDirectory()) return
   } catch {
@@ -18,23 +26,21 @@ export function scanAndRegisterPages(dir: string, pages: any[], routePrefix = ''
   for (const file of readdirSync(dir)) {
     const filePath = resolve(dir, file)
     const stat = statSync(filePath)
-    const fileAndPrefix = `${routePrefix}${file}`
 
     if (stat.isDirectory()) {
-      scanAndRegisterPages(filePath, pages, `${fileAndPrefix}/`)
+      // 폴더 내부도 계속 순회
+      scanAndRegisterPages(filePath, pages)
     } else if (file.endsWith('.vue')) {
       const fileName = file.replace('.vue', '')
-      let path = `${routePrefix}${fileName}`
-
+      let path = ''
       if (fileName.toLowerCase() === 'index') {
-        path = routePrefix.slice(0, -1)
+        path = '/'
+      } else {
+        path = '/' + toKebabCase(fileName)
       }
-
-      path = `/${path}`.replace(/\/+/g, '/')
-
       pages.push({
-        name: path.replace(/[/:]/g, '-') || 'index',
-        path: path.replace(/\[([^\]]+)\]/g, ':$1'),
+        name: (path === '/' ? 'index' : path.replace(/[/:]/g, '-')),
+        path: path,
         file: filePath
       })
     }

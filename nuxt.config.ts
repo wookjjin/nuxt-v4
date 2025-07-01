@@ -37,8 +37,7 @@ export default defineNuxtConfig({
           const domainPath = resolve(modulesDir, domain)
           if (statSync(domainPath).isDirectory()) {
             const pagesDir = resolve(domainPath, 'pages')
-            const routePrefix = domain.toLowerCase() === 'home' ? '' : `${domain}/`
-            scanAndRegisterPages(pagesDir, pages, routePrefix)
+            scanAndRegisterPages(pagesDir, pages)
           }
         }
       } catch {
