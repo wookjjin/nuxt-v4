@@ -75,7 +75,7 @@ export default withNuxt(
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_'
       }], // 사용하지 않는 변수에 대한 처리 개선
-      'complexity': ['warn', 10], // 함수 복잡도 제한
+      'complexity':'off',
       'import/no-duplicates': 'error',
       // 추가된 import 관련 규칙들
       'import/order': ['error', {
@@ -101,7 +101,8 @@ export default withNuxt(
         ],
         'pathGroupsExcludedImportTypes': ['type']
       }],
-      'import/newline-after-import': 'error'
+      'import/newline-after-import': 'error',
+      'no-case-declarations': 'off',
     }
   },
   {

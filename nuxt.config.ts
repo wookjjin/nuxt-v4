@@ -1,8 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { readdirSync, statSync } from 'fs'
-import { resolve } from 'path'
+import tailwindcss from '@tailwindcss/vite'
 
-import { scanAndRegisterPages } from './app/shared/utils/pageScanner'
+import {
+  applyAllServiceRoutes,
+  checkDuplicateRoutes,
+  logRouteTransformations
+} from './app/shared/config/route-mapping'
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-06-24',
@@ -16,36 +19,12 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/fonts'
   ],
-
-  srcDir: '.',
-  dir: {
-    app: 'app'
+  css: ['~/styles/main.css'],
+  vite: {
+    plugins: [
+      tailwindcss()
+    ]
   },
-
-  // Modules 디렉토리의 페이지들을 자동으로 등록
-  hooks: {
-    'pages:extend'(pages) {
-      // 자동 생성된 페이지를 모두 제거하고, 아래 로직으로만 페이지를 등록합니다.
-      pages.splice(0, pages.length)
-
-      const modulesDir = resolve('./app/modules')
-      try {
-        if (!statSync(modulesDir).isDirectory()) return
-
-        // 각 module 디렉토리의 pages 폴더를 스캔합니다.
-        for (const domain of readdirSync(modulesDir)) {
-          const domainPath = resolve(modulesDir, domain)
-          if (statSync(domainPath).isDirectory()) {
-            const pagesDir = resolve(domainPath, 'pages')
-            scanAndRegisterPages(pagesDir, pages)
-          }
-        }
-      } catch {
-        // modules 디렉토리가 존재하지 않는 경우 무시합니다.
-      }
-    }
-  },
-
   experimental: {
     scanPageMeta: 'after-resolve',
     sharedPrerenderData: false,
@@ -70,6 +49,40 @@ export default defineNuxtConfig({
   unhead: {
     renderSSRHeadOptions: {
       omitLineBreaks: false
+    }
+  },
+  hooks: {
+    'pages:extend'(pages) {
+      // 서비스 라우트 변환 적용
+      const routeChanges = applyAllServiceRoutes(pages)
+
+      // 개발 환경에서만 상세 로깅
+      if (process.env.NODE_ENV === 'development') {
+        // 변환 결과 로깅
+        logRouteTransformations(routeChanges)
+
+        // 중복 라우트 체크
+        const duplicates = checkDuplicateRoutes(pages)
+
+        // 중복이 있으면 프로세스 종료 (선택사항)
+        if (duplicates.length > 0 && process.env.STRICT_ROUTING === 'true') {
+          console.error('❌ Duplicate routes found. Fix conflicts before continuing.')
+          process.exit(1)
+        }
+      }
+
+      // 프로덕션에서는 간단한 요약만
+      if (process.env.NODE_ENV === 'production' && routeChanges.length > 0) {
+        console.log(`✅ ${routeChanges.length} service routes transformed successfully.`)
+      }
+    },
+
+    // 빌드 완료 후 라우트 정보 출력 (선택사항)
+    'build:done'() {
+      if (process.env.NODE_ENV === 'development' && process.env.SHOW_ROUTES === 'true') {
+        console.log('\n📋 All available routes have been generated.')
+        console.log('   Check your browser network tab to see the actual routes in action.')
+      }
     }
   }
 })
