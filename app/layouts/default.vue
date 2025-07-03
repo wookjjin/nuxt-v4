@@ -49,7 +49,7 @@ function handleMenuClick() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 flex flex-col">
     <!-- Header -->
     <header class="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
       <div class="max-w-md mx-auto px-4 py-3">
@@ -213,7 +213,7 @@ function handleMenuClick() {
     </transition>
 
     <!-- 메인 컨텐츠 -->
-    <main class="max-w-md mx-auto min-h-screen pb-20">
+    <main class="flex-1 max-w-md mx-auto w-full pb-20">
       <slot />
     </main>
 

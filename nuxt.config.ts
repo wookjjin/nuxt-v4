@@ -19,7 +19,7 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/fonts'
   ],
-  css: ['~/styles/main.css'],
+  css: ['~/assets/css/main.css'],
   vite: {
     plugins: [
       tailwindcss()
