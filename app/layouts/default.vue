@@ -209,7 +209,7 @@ function handleMenuClick() {
     </transition>
 
     <!-- 메인 컨텐츠 -->
-    <main class="flex-1 max-w-md mx-auto w-full pb-20">
+    <main class="flex-1 max-w-md mx-auto w-full">
       <slot />
     </main>
 
