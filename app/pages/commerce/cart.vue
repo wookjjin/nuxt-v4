@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 
 const router = useRouter()
-
+const loading = ref(true)
 const cartItems = ref([
   {
     id: 1,
@@ -29,6 +29,24 @@ const cartItems = ref([
     originalPrice: 60000,
     quantity: 1,
     selected: false
+  },
+  {
+    id: 4,
+    name: '노트북 거치대',
+    option: '그린',
+    price: 45000,
+    originalPrice: 60000,
+    quantity: 1,
+    selected: false
+  },
+  {
+    id: 5,
+    name: '스마트폰 케이스',
+    option: '스카이 블루',
+    price: 16000,
+    originalPrice: null,
+    quantity: 2,
+    selected: true
   }
 ])
 
@@ -55,17 +73,17 @@ const toggleSelectAll = () => {
   })
 }
 
-const increaseQuantity = (item) => {
+const increaseQuantity = (item: { quantity: number }) => {
   item.quantity++
 }
 
-const decreaseQuantity = (item) => {
+const decreaseQuantity = (item: { quantity: number }) => {
   if (item.quantity > 1) {
     item.quantity--
   }
 }
 
-const removeItem = (itemId) => {
+const removeItem = (itemId: number) => {
   const index = cartItems.value.findIndex(item => item.id === itemId)
   if (index > -1) {
     cartItems.value.splice(index, 1)
@@ -78,8 +96,8 @@ const deleteSelected = () => {
   selectAll.value = false
 }
 
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('ko-KR').format(price)
+const formatPrice = (price: string | number | bigint) => {
+  return new Intl.NumberFormat('ko-KR').format(Number(price))
 }
 
 const goBack = () => {
@@ -98,8 +116,13 @@ const goToCheckout = () => {
   navigateTo('/checkout')
 }
 
+
 onMounted(() => {
   updateSelectAll()
+
+  setTimeout(() => {
+    loading.value = false
+  }, 1000)
 })
 </script>
 
@@ -130,7 +153,7 @@ onMounted(() => {
         <div class="select-all">
           <label class="checkbox-label">
             <input v-model="selectAll" type="checkbox" class="checkbox" @change="toggleSelectAll">
-            <span class="checkmark"/>
+            <span class="checkmark" />
             전체 선택
           </label>
           <button class="delete-selected" @click="deleteSelected">
@@ -140,40 +163,54 @@ onMounted(() => {
 
         <!-- 아이템 목록 -->
         <div class="cart-items">
-          <div v-for="item in cartItems" :key="item.id" class="cart-item">
-            <label class="checkbox-label">
-              <input v-model="item.selected" type="checkbox" class="checkbox" @change="updateSelectAll">
-              <span class="checkmark"/>
-            </label>
-
-            <div class="item-info">
-              <div class="item-details">
-                <h3 class="item-name">{{ item.name }}</h3>
-                <p v-if="item.option" class="item-option">{{ item.option }}</p>
-                <div class="item-price">
-                  <span class="current-price">{{ formatPrice(item.price) }}원</span>
-                  <span v-if="item.originalPrice" class="original-price">
-                    {{ formatPrice(item.originalPrice) }}원
-                  </span>
-                </div>
-              </div>
-
-              <div class="item-actions">
-                <div class="quantity-control">
-                  <button class="quantity-btn" :disabled="item.quantity <= 1" @click="decreaseQuantity(item)">
-                    <Icon name="heroicons:minus" size="14" />
-                  </button>
-                  <span class="quantity">{{ item.quantity }}</span>
-                  <button class="quantity-btn" @click="increaseQuantity(item)">
-                    <Icon name="heroicons:plus" size="14" />
-                  </button>
-                </div>
-                <button class="remove-btn" @click="removeItem(item.id)">
-                  <Icon name="heroicons:trash" size="16" />
-                </button>
+          <template v-if="loading">
+            <div v-for="n in cartItems.length" :key="n" class="cart-item skeleton">
+              <div class="skeleton-checkbox" />
+              <div class="skeleton-info">
+                <div class="skeleton-line short" />
+                <div class="skeleton-line" />
+                <div class="skeleton-price" />
               </div>
             </div>
-          </div>
+          </template>
+          <template v-else>
+            <TransitionGroup name="cart" tag="div">
+              <div v-for="item in cartItems" :key="item.id" class="cart-item">
+                <label class="checkbox-label">
+                  <input v-model="item.selected" type="checkbox" class="checkbox" @change="updateSelectAll">
+                  <span class="checkmark" />
+                </label>
+
+                <div class="item-info">
+                  <div class="item-details">
+                    <h3 class="item-name">{{ item.name }}</h3>
+                    <p v-if="item.option" class="item-option">{{ item.option }}</p>
+                    <div class="item-price">
+                      <span class="current-price">{{ formatPrice(item.price) }}원</span>
+                      <span v-if="item.originalPrice" class="original-price">
+                        {{ formatPrice(item.originalPrice) }}원
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="item-actions">
+                    <div class="quantity-control">
+                      <button class="quantity-btn" :disabled="item.quantity <= 1" @click="decreaseQuantity(item)">
+                        <Icon name="heroicons:minus" size="14" />
+                      </button>
+                      <span class="quantity">{{ item.quantity }}</span>
+                      <button class="quantity-btn" @click="increaseQuantity(item)">
+                        <Icon name="heroicons:plus" size="14" />
+                      </button>
+                    </div>
+                    <button class="remove-btn" @click="removeItem(item.id)">
+                      <Icon name="heroicons:trash" size="16" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </TransitionGroup>
+          </template>
         </div>
       </div>
     </div>

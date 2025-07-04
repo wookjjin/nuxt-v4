@@ -390,3 +390,105 @@
     max-height: calc(100vh - 340px);
   }
 }
+
+/* 스켈레톤 애니메이션 */
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.skeleton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 8px;
+  min-height: 80px;
+}
+
+.skeleton-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: #eee;
+  animation: shimmer 1.2s infinite linear forwards;
+  background: linear-gradient(
+    to right,
+    #eeeeee 8%,
+    #dddddd 18%,
+    #eeeeee 33%
+  );
+  background-size: 800px 104px;
+}
+
+.skeleton-info {
+  flex: 1;
+}
+
+.skeleton-line {
+  height: 14px;
+  background: #eee;
+  margin-bottom: 6px;
+  border-radius: 4px;
+  animation: shimmer 1.2s infinite linear forwards;
+  background: linear-gradient(
+    to right,
+    #eeeeee 8%,
+    #dddddd 18%,
+    #eeeeee 33%
+  );
+  background-size: 800px 104px;
+}
+
+.skeleton-line.short {
+  width: 50%;
+}
+
+.skeleton-price {
+  width: 80px;
+  height: 14px;
+  background: #eee;
+  border-radius: 4px;
+  animation: shimmer 1.2s infinite linear forwards;
+  background: linear-gradient(
+    to right,
+    #eeeeee 8%,
+    #dddddd 18%,
+    #eeeeee 33%
+  );
+  background-size: 800px 104px;
+}
+
+// Animation
+.cart-enter-active,
+.cart-leave-active {
+  transition: all 0.3s ease;
+}
+
+.cart-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.cart-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cart-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+.cart-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.cart-move {
+  transition: transform 0.3s ease;
+}
