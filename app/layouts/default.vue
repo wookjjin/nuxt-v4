@@ -1,11 +1,9 @@
 <script setup>
-// 반응형 상태 관리
 const showSearch = ref(false)
 const showMenu = ref(false)
 const searchQuery = ref('')
-const cartCount = ref(3) // 예시 데이터
+const cartCount = ref(3)
 
-// 메서드
 const toggleSearch = () => {
   showSearch.value = !showSearch.value
   if (showSearch.value) {
@@ -27,7 +25,6 @@ const handleSearch = () => {
   }
 }
 
-// 메뉴 오버레이 ESC 키로 닫기
 onMounted(() => {
   const handleEscape = (e) => {
     if (e.key === 'Escape') {
@@ -42,7 +39,6 @@ onMounted(() => {
   })
 })
 
-// 메뉴 클릭 시 닫기
 function handleMenuClick() {
   showMenu.value = false
 }
@@ -282,11 +278,6 @@ function handleMenuClick() {
 </template>
 
 <style scoped>
-/* 커스텀 스타일링 (필요시) */
-.router-link-active {
-  /* @apply text-blue-600; */
-}
-
 /* 스크롤바 숨기기 (필요시) */
 .hide-scrollbar {
   -ms-overflow-style: none;
