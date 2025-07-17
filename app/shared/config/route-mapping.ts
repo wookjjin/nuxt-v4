@@ -130,25 +130,74 @@ export function transformServiceRoute(
     return null
   }
 
-  // include 조건 확인 (파일명 기준)
+  // include 조건 확인 (파일명 및 폴더 경로 기준)
   if (config.include && config.include.length > 0) {
-    const isIncluded = config.include.some(includePath =>
-      fileName.includes(includePath) ||
-      path.includes(`/${includePath}.`) ||
-      path.includes(`/${includePath}/`)
-    )
+    const isIncluded = config.include.some(includePath => {
+      // 파일명이 직접 매치되는 경우
+      if (fileName.includes(includePath)) {
+        return true
+      }
+
+      // 경로에 포함되는 경우 (단일 파일)
+      if (path.includes(`/${includePath}.`)) {
+        return true
+      }
+
+      // 폴더 경로에 포함되는 경우
+      if (path.includes(`/${includePath}/`)) {
+        return true
+      }
+
+      // 폴더 내부의 파일들을 처리하는 경우
+      // 예: /commerce/categories/index.vue -> categories 매치
+      const pathSegments = path.split('/').filter(Boolean)
+      const folderIndex = pathSegments.indexOf(config.folderName)
+      if (folderIndex !== -1 && folderIndex + 1 < pathSegments.length) {
+        const nextSegment = pathSegments[folderIndex + 1]
+        if (nextSegment === includePath) {
+          return true
+        }
+      }
+
+      return false
+    })
+
     if (!isIncluded) {
       return null
     }
   }
 
-  // exclude 조건 확인 (파일명 기준)
+  // exclude 조건 확인 (파일명 및 폴더 경로 기준)
   if (config.exclude && config.exclude.length > 0) {
-    const isExcluded = config.exclude.some(excludePath =>
-      fileName.includes(excludePath) ||
-      path.includes(`/${excludePath}.`) ||
-      path.includes(`/${excludePath}/`)
-    )
+    const isExcluded = config.exclude.some(excludePath => {
+      // 파일명이 직접 매치되는 경우
+      if (fileName.includes(excludePath)) {
+        return true
+      }
+
+      // 경로에 포함되는 경우 (단일 파일)
+      if (path.includes(`/${excludePath}.`)) {
+        return true
+      }
+
+      // 폴더 경로에 포함되는 경우
+      if (path.includes(`/${excludePath}/`)) {
+        return true
+      }
+
+      // 폴더 내부의 파일들을 처리하는 경우
+      const pathSegments = path.split('/').filter(Boolean)
+      const folderIndex = pathSegments.indexOf(config.folderName)
+      if (folderIndex !== -1 && folderIndex + 1 < pathSegments.length) {
+        const nextSegment = pathSegments[folderIndex + 1]
+        if (nextSegment === excludePath) {
+          return true
+        }
+      }
+
+      return false
+    })
+
     if (isExcluded) {
       return null
     }
